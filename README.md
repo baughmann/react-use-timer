@@ -1,60 +1,60 @@
 # React useTimer
-### A simple job-based asynchronous queue for `react` and `react-native`
+A simple timer that updates every millisecond that you can pause, resume, reset, and do something when the countdown completes.
 
-A wrapper around a React `state` and `AsyncStorage` that basically creates an in-memory database that stays synced with a collection in `AsyncStorage`.
 
 ### Setup
 
 First, add it to your project as you normally would.
 
-`$ yarn add react-use-database`
+`$ yarn add react-use-timer`
 
-Make sure to also add the peer dependencies: `@react-native-community/async-storage` and `uuid`:
-
-`$ yarn add @react-native-community/async-storage uuid`
-
-Finally, you can import it into your project.
-
-`import useDatabase from "react-use-database";`
+`import useTimer from "react-use-timer";`
 
 
 ### Example Useage
 
-#### Creating the database
+#### Creating the Timer
 
 Next, simply use the hook as so.
 
-`const Database = useDatabase<IMyCustomInterface>('my_somethings');`
+`const Timer = useTimer(10.5, () => doSomethingWhenDone());`
 
 
-#### Listing and finding items
+#### Interacting with the timer
 
-All items exist as an in-memory array that you can access simply by interacting with `Database.items` like so:
+To start the timer for the first time, or to resume the timer after pausing, simply call:
 
+`Timer.start()`
+
+Pausing the timer is just as simple:
+
+`Timer.pause()`
+
+To reset the timer back to zero at any time, just call:
+
+`Timer.reset()`
+
+If you'd like to know how much time is left on the timer, just observe the following value, which updates every millisecond:
+
+`Timer.seconds`
+
+If you need to know whether or not the timer is currently running, just use:
+
+`Timer.isActive`
+
+This returns `false` if the timer is paused. It only returns `true` when the timer is actively counting down.
+
+#### Displaying the time remaining
+
+If you wish to tell the user how much time the they have left, you could easily just do something like 
 ```
-  const someItem = Database.items.find(item => item.firstName === "Snuffy")
+<Text>{Math.floor(10.5 - Timer.seconds)}s</Text>
 ```
-
-#### Inserting items
-
-You can insert an item simply by calling `Database.insert(someItem)`. If your item does not have an `id` property, then the `insert()` function will generate a UUID string for you and return it:
-
+Which would output something like 
 ```
-  const itemId: string = await Database.insert(someItem);
+6s
 ```
-
-#### Updating items
-
-To update an item, simply call `await Database.update(someItem)`. The database will find an item in the database that has the same `id` as the one you passed to the `update()` function and will overwrite it with the one you passed.
-
-#### Removing items
-
-Removing an item is as easy as passing the ID of the item you wish to remove: `await Database.remove(someItemId)`.
-
-#### Replacing the entire collection
-
-If you're refreshing the database with a list you got from somewhere else, or if you're re-ordering the list, then you can overwrite the entire database by calling `await Database.overwrite(myNewArrayOfItems)`.
 
 ### Note
 
-Don't let the database get too big. Neither `state` nor `AsyncStorage` is a good way to manage a large list, or a list of large objects. For everyday useage, though, you shouldn't have any problems.
+The timer updates one thousand times per second, so if you're observing `Timer.seconds`, ensure that you're not doing anything too crazy.
