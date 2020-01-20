@@ -1,6 +1,4 @@
 # React useTimer
-### A simple job-based asynchronous queue for `react` and `react-native`
-
 A simple timer that updates every millisecond that you can pause, resume, reset, and do something when the countdown completes.
 
 
