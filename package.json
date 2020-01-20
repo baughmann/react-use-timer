@@ -13,13 +13,13 @@
   "keywords": [
     "react",
     "react-native",
-    "database",
-    "storage",
-    "localstorage",
-    "asyncstorage",
+    "timer",
+    "stopwatch",
+    "countdown",
+    "seconds",
     "hook",
     "use",
-    "usedatabase"
+    "usetimer"
   ],
   "author": "Nick Baughman",
   "license": "MIT",
