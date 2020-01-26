@@ -32,7 +32,12 @@ export type Timer = {
   /**
    * @description The amount of time that passed during the last active period
    */
-  lastElapsed: number
+  lastElapsed: number;
+
+  /**
+   * @description Erases the last recorded segment of the timer
+   */
+  rewind: () => void
 };
 
 /**
@@ -62,6 +67,10 @@ export default (stopAtSeconds?: number, onStop?: () => void): Timer => {
     setPrevSeconds(seconds);
   };
 
+  const rewind = () => {
+    setSeconds(seconds - lastElapsed)
+  }
+
   const start = () => {
     setStartTime(Date.now());
     setIsActive(true);
@@ -85,5 +94,5 @@ export default (stopAtSeconds?: number, onStop?: () => void): Timer => {
     return () => clearInterval(interval);
   }, [isActive, seconds]);
 
-  return { seconds, pause, start, reset, isActive, lastElapsed };
+  return { seconds, pause, start, reset, isActive, lastElapsed, rewind };
 };
