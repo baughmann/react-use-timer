@@ -11,8 +11,9 @@ export type Timer = {
 
   /**
    * @description Pauses the timer
+   * @returns The last elapsed seconds
    */
-  pause: () => void;
+  pause: () => number;
 
   /**
    * @description Starts or resumes the timer
@@ -32,7 +33,12 @@ export type Timer = {
   /**
    * @description Sets the seconds passed to the desired number
    */
-  setSeconds: (next: number) => void
+  setSeconds: (next: number) => void;
+
+  /**
+   * @description The number of seconds passed during the last active session
+   */
+  lastElapsed: number;
 };
 
 /**
@@ -47,27 +53,34 @@ export default (stopAtSeconds?: number, onStop?: () => void): Timer => {
   // seconds that have ellapsed since the timer was created
   const [prevSeconds, setPrevSeconds] = useState<number>(0);
   const [isActive, setIsActive] = useState(false);
+  const [lastElapsed, setLastElapsed] = useState(0);
 
   const reset = () => {
     _setSeconds(0);
     setPrevSeconds(0);
+    setLastElapsed(0);
     setIsActive(false);
   };
 
-  const pause = () => {
+  const pause = (): number => {
     setIsActive(false);
+    const _lastElapsed = seconds - prevSeconds;
+    setLastElapsed(_lastElapsed);
     setPrevSeconds(seconds);
+
+    return _lastElapsed;
   };
 
   const start = () => {
     setStartTime(Date.now());
     setIsActive(true);
+    setLastElapsed(0);
   };
 
   const setSeconds = (next: number) => {
-    _setSeconds(next)
-    setPrevSeconds(next)
-  }
+    _setSeconds(next);
+    setPrevSeconds(next);
+  };
 
   useEffect(() => {
     if (stopAtSeconds && seconds >= stopAtSeconds) {
@@ -86,5 +99,8 @@ export default (stopAtSeconds?: number, onStop?: () => void): Timer => {
     return () => clearInterval(interval);
   }, [isActive, seconds]);
 
-  return { seconds, pause, start, reset, isActive, setSeconds };
+  return { seconds, pause, start, reset, isActive, setSeconds, lastElapsed };
 };
+
+// setting last elapsed 0.894 0 0.894
+// setting last elapsed 1.971 0.894 1.077

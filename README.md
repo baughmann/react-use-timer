@@ -44,6 +44,18 @@ If you need to know whether or not the timer is currently running, just use:
 
 This returns `false` if the timer is paused. It only returns `true` when the timer is actively counting down.
 
+If you needs to know how much time elapsed between the ***last*** `start()` and `pause()`, you can get it like do:
+
+`Timer.lastElapsed`
+
+If you need to manually change the timer's time outside of normal user interaction (such as rewinding or skipping), you can do it by passing a decimal seconds number to 
+
+`Timer.setSeconds(someNewValue)`
+
+This allows you to, for example, rewind the timer like so (note, this will only work once because `lastElapsed` only keeps track of the previous session):
+
+`Timer.setSeconds(Timer.seconds - Timer.lastElapsed)`
+
 #### Displaying the time remaining
 
 If you wish to tell the user how much time the they have left, you could easily just do something like 
