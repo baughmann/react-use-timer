@@ -30,14 +30,9 @@ export type Timer = {
   isActive: boolean;
 
   /**
-   * @description The amount of time that passed during the last active period
+   * @description Sets the seconds passed to the desired number
    */
-  lastElapsed: number;
-
-  /**
-   * @description Erases the last recorded segment of the timer
-   */
-  rewind: () => void
+  setSeconds: (next: number) => void
 };
 
 /**
@@ -48,35 +43,31 @@ export type Timer = {
 export default (stopAtSeconds?: number, onStop?: () => void): Timer => {
   const [startTime, setStartTime] = useState<number>();
   // seconds that have ellapsed this time
-  const [seconds, setSeconds] = useState<number>(0);
+  const [seconds, _setSeconds] = useState<number>(0);
   // seconds that have ellapsed since the timer was created
   const [prevSeconds, setPrevSeconds] = useState<number>(0);
-  const [lastElapsed, setLastElapsed] = useState<number>(0);
   const [isActive, setIsActive] = useState(false);
 
   const reset = () => {
-    setSeconds(0);
+    _setSeconds(0);
     setPrevSeconds(0);
-    setLastElapsed(0);
     setIsActive(false);
   };
 
   const pause = () => {
     setIsActive(false);
-    setLastElapsed(seconds - prevSeconds);
     setPrevSeconds(seconds);
   };
-
-  const rewind = () => {
-    setSeconds(seconds - lastElapsed)
-    setPrevSeconds(seconds - lastElapsed)
-  }
 
   const start = () => {
     setStartTime(Date.now());
     setIsActive(true);
-    setLastElapsed(0);
   };
+
+  const setSeconds = (next: number) => {
+    _setSeconds(next)
+    setPrevSeconds(next)
+  }
 
   useEffect(() => {
     if (stopAtSeconds && seconds >= stopAtSeconds) {
@@ -87,7 +78,7 @@ export default (stopAtSeconds?: number, onStop?: () => void): Timer => {
     let interval: any = null;
     if (isActive && startTime) {
       interval = setInterval(() => {
-        setSeconds((Date.now() - startTime) / 1000 + prevSeconds);
+        _setSeconds((Date.now() - startTime) / 1000 + prevSeconds);
       }, 10);
     } else if (!isActive && seconds !== 0) {
       clearInterval(interval);
@@ -95,5 +86,5 @@ export default (stopAtSeconds?: number, onStop?: () => void): Timer => {
     return () => clearInterval(interval);
   }, [isActive, seconds]);
 
-  return { seconds, pause, start, reset, isActive, lastElapsed, rewind };
+  return { seconds, pause, start, reset, isActive, setSeconds };
 };
