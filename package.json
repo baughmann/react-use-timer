@@ -1,6 +1,6 @@
 {
   "name": "react-use-timer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A simple timer that you can pause, resume, reset, and do something when the countdown completes.",
   "main": "index.tsx",
   "scripts": {

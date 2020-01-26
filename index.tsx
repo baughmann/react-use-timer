@@ -28,6 +28,11 @@ export type Timer = {
    * @description Whether or not the timer is currently running
    */
   isActive: boolean;
+
+  /**
+   * @description The amount of time that passed during the last active period
+   */
+  lastElapsed: number
 };
 
 /**
@@ -41,22 +46,26 @@ export default (stopAtSeconds?: number, onStop?: () => void): Timer => {
   const [seconds, setSeconds] = useState<number>(0);
   // seconds that have ellapsed since the timer was created
   const [prevSeconds, setPrevSeconds] = useState<number>(0);
+  const [lastElapsed, setLastElapsed] = useState<number>(0);
   const [isActive, setIsActive] = useState(false);
 
   const reset = () => {
     setSeconds(0);
     setPrevSeconds(0);
+    setLastElapsed(0);
     setIsActive(false);
   };
 
   const pause = () => {
     setIsActive(false);
+    setLastElapsed(seconds - prevSeconds);
     setPrevSeconds(seconds);
   };
 
   const start = () => {
     setStartTime(Date.now());
     setIsActive(true);
+    setLastElapsed(0);
   };
 
   useEffect(() => {
@@ -76,5 +85,5 @@ export default (stopAtSeconds?: number, onStop?: () => void): Timer => {
     return () => clearInterval(interval);
   }, [isActive, seconds]);
 
-  return { seconds, pause, start, reset, isActive };
+  return { seconds, pause, start, reset, isActive, lastElapsed };
 };
