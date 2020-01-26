@@ -69,6 +69,7 @@ export default (stopAtSeconds?: number, onStop?: () => void): Timer => {
 
   const rewind = () => {
     setSeconds(seconds - lastElapsed)
+    setPrevSeconds(seconds - lastElapsed)
   }
 
   const start = () => {
